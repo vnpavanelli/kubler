@@ -4,7 +4,6 @@
 set -e
 
 EMERGE_ROOT="/emerge-root"
-EMERGE_BIN="${BOB_EMERGE_BIN:-emerge}"
 EMERGE_OPT="${EMERGE_OPT:-}"
 CONFIG="/config"
 CONFIG_TMP="${CONFIG}/tmp"
@@ -274,6 +273,12 @@ download_from_oracle() {
 }
 
 source /etc/profile
+
+if [[ "${CHOST}" = "x86_64-pc-linux-gnu" ]]; then
+    EMERGE_BIN="emerge"
+else
+    EMERGE_BIN="emerge-${CHOST}"
+fi
 
 mkdir -p $EMERGE_ROOT
 
