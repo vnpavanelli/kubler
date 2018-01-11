@@ -35,7 +35,7 @@ function update_builders() {
                 ARCH="${ARCH:-amd64}"
                 ARCH_URL="${ARCH_URL:-${MIRROR}releases/${ARCH}/autobuilds/current-${STAGE3_BASE}/}"
                 remote_files="$(wget -qO- "${ARCH_URL}")"
-                regex="${STAGE3_BASE//+/\\+}-([0-9]{8})(T[0-9]{6}Z)?\\.tar\\.bz2"
+                regex="${STAGE3_BASE//+/\\+}-([0-9]{8})(T[0-9]{6}Z)?\\.tar\\.(bz2|xz)"
                 if [[ "${remote_files}" =~ ${regex} ]]; then
                     s3date_remote="${BASH_REMATCH[1]}"
                     # add time string if captured

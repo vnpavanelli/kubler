@@ -374,7 +374,18 @@ function import_stage3() {
     download_stage3 || die "failed to download stage3 files"
     # shellcheck disable=SC2154
     msg "--> import ${image_id}:${STAGE3_DATE} using ${_stage3_file}"
-    bzcat < "${DOWNLOAD_PATH}/${_stage3_file}" | bzip2 | "${DOCKER}" import - "${image_id}:${STAGE3_DATE}" || die "failed to import ${_stage3_file}"
+    local file_extension
+    file_extension=${_stage3_file##*.}
+    echo "*************"
+    echo " File extension: ${file_extension}"
+    echo "*************"
+    if [ $file_extension = "xz" ]; then
+    	xzcat < "${DOWNLOAD_PATH}/${_stage3_file}" | bzip2 | "${DOCKER}" import - "${image_id}:${STAGE3_DATE}" || die "failed to import ${_stage3_file}"
+    elif [ $file_extension = "bz2" ]; then
+    	bzcat < "${DOWNLOAD_PATH}/${_stage3_file}" | bzip2 | "${DOCKER}" import - "${image_id}:${STAGE3_DATE}" || die "failed to import ${_stage3_file}"
+    else
+    	die "File extension not supported: ${file_extension} from ${_stage3_file}" 
+    fi
 
     msg "tag ${image_id}:latest"
     "${DOCKER}" tag "${image_id}:${STAGE3_DATE}" "${image_id}:latest" || die "failed to tag"
