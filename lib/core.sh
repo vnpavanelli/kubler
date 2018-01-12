@@ -246,9 +246,15 @@ function download_stage3() {
     ARCH_URL="${ARCH_URL:-${MIRROR}releases/${ARCH}/autobuilds/current-${STAGE3_BASE}/}"
 
     [[ -d "${DOWNLOAD_PATH}" ]] || mkdir -p "${DOWNLOAD_PATH}"
-    local is_autobuild stage3_contents stage3_digests sha512_hashes sha512_check sha512_failed wget_exit
+    local is_autobuild stage3_contents stage3_digests sha512_hashes sha512_check sha512_failed wget_exit is_bz2
+    is_bz2=false
     is_autobuild=false
-    _stage3_file="${STAGE3_BASE}-${STAGE3_DATE}.tar.bz2"
+    _stage3_file="${STAGE3_BASE}-${STAGE3_DATE}.tar.xz"
+    if [[ `wget -S --spider "${ARCH_URL}${_stage3_file}" 2>&1 | grep 'HTTP/1.1 200 OK'` ]]; 
+    	then echo "Stage3 is a XZ file"; 
+	else
+    		_stage3_file="${STAGE3_BASE}-${STAGE3_DATE}.tar.bz2"
+    fi
     stage3_contents="${_stage3_file}.CONTENTS"
     stage3_digests="${_stage3_file}.DIGESTS"
     if [[ "${ARCH_URL}" == *autobuilds*  ]]; then
